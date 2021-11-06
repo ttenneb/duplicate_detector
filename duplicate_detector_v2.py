@@ -21,7 +21,6 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import VotingClassifier
 from sklearn.linear_model import BayesianRidge
 from sklearn.neighbors import KNeighborsRegressor
-#from xgboost.sklearn import XGBClassifier
 
 data_train = pd.read_csv(open("data_ssim.csv"))
 for i, row in data_train.iterrows():
