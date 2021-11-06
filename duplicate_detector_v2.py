@@ -46,8 +46,7 @@ models =[]
 # for i in range(model_n):
 #     models.append(("ab" + str(i), RandomForestClassifier(n_estimators=75, random_state=i)))
 #clf = VotingClassifier(estimators=models, voting="hard")
-#clf = RandomForestRegressor(n_estimators=300, random_state=0)
-clf = KNeighborsRegressor()
+clf = RandomForestRegressor(n_estimators=300, random_state=0)
 clf.fit(x, y)
 total = 0
 total_false_positive = 0
