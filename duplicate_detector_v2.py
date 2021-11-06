@@ -18,9 +18,7 @@ from sklearn import svm, metrics
 from sklearn.linear_model import ElasticNet
 from sklearn.model_selection import learning_curve
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.ensemble import VotingClassifier
-from sklearn.linear_model import BayesianRidge
-from sklearn.neighbors import KNeighborsRegressor
+
 
 data_train = pd.read_csv(open("data_ssim.csv"))
 for i, row in data_train.iterrows():
