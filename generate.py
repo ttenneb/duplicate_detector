@@ -40,7 +40,7 @@ for row in data:
         dist, start_dist = trajectoy_distance(saved[6], row[6])
         time_dist = datetime.strptime(row[2], "%Y-%m-%d %H:%M:%S") - datetime.strptime(saved[3], "%Y-%m-%d %H:%M:%S")
         time_dist = time_dist.total_seconds()
-        dataset_dup.append((saved[8], row[8], dist, math.log(dist), start_dist, math.log(dist), time_dist, math.log(time_dist)))
+        dataset_dup.append((saved[8], row[8], dist, math.log(dist), start_dist, math.log(dist), time_dist))
     elif row[8] != "clip":
         temp = last
         last = row
@@ -90,7 +90,7 @@ with open('data_ssim.csv', 'w', newline='') as csvfile:
     csvfile.truncate(0)
 
     output = csv.writer(csvfile)
-    output.writerow(['video1', 'video2', "trajectory_distance", "ln_trajectory_distance", "start_distance", "ln_start_distance",'seconds', "ln_seconds", 'duplicate', 'ssim'])
+    output.writerow(['video1', 'video2', "trajectory_distance", "ln_trajectory_distance", "start_distance", "ln_start_distance",'seconds', 'duplicate', 'ssim'])
     for row in dataset:
         print(row)
         output.writerow(row)
