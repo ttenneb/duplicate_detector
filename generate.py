@@ -27,9 +27,9 @@ def trajectoy_distance(list1, list2):
         total = 0
         for i, vec in enumerate(list1):
             if i >= len(list2):
-                return [total, start_dist]
+                return [max(total,.01), max(start_dist,.01)]
             total += pow(vec[0] - list2[i][0], 2) + pow(vec[1] - list2[i][1], 2)
-        return [total, start_dist]
+        return [max(total,.01), max(start_dist,.01)]
 
 
 for row in data:
@@ -40,7 +40,8 @@ for row in data:
         dist, start_dist = trajectoy_distance(saved[6], row[6])
         time_dist = datetime.strptime(row[2], "%Y-%m-%d %H:%M:%S") - datetime.strptime(saved[3], "%Y-%m-%d %H:%M:%S")
         time_dist = time_dist.total_seconds()
-        dataset_dup.append((saved[8], row[8], dist, math.log(dist), start_dist, math.log(dist), time_dist))
+        print(dist, start_dist)
+        dataset_dup.append((saved[8], row[8], dist, math.log(dist), start_dist, math.log(start_dist), time_dist))
     elif row[8] != "clip":
         temp = last
         last = row
@@ -50,7 +51,8 @@ for row in data:
             time_dist = datetime.strptime(last[2], "%Y-%m-%d %H:%M:%S") - datetime.strptime(temp[3],
                                                                                             "%Y-%m-%d %H:%M:%S")
             time_dist = time_dist.total_seconds()
-            dataset_not_dup.append((temp[8], last[8], dist, start_dist, time_dist))
+            print(dist,start_dist)
+            dataset_not_dup.append((temp[8], last[8], dist, math.log(dist), start_dist, math.log(start_dist), time_dist))
 # print(len(dataset_not_dup), len(dataset_dup))
 dataset = []
 for row in dataset_dup:
