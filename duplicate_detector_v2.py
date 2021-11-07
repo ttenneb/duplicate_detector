@@ -1,6 +1,4 @@
-import urllib
-from math import floor
-from random import random
+
 
 import matplotlib.pyplot as plt
 import cv2 as cv
@@ -14,9 +12,10 @@ import plotly.express as plot
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
-from sklearn import svm, metrics
-from sklearn.linear_model import ElasticNet
+from sklearn import svm, metrics, kernel_ridge
+from sklearn.neighbors import RadiusNeighborsRegressor
 from sklearn.model_selection import learning_curve
+from sklearn.ensemble import StackingRegressor, ExtraTreesRegressor
 from sklearn.ensemble import RandomForestRegressor
 
 
@@ -29,8 +28,9 @@ for i, row in data_train.iterrows():
 
 data_train = data_train.dropna()
 data_train = data_train.sample(frac=1).reset_index(drop=True)
-# norm_df = (data_train-data_train.mean())/data_train.std()
-# data_train[["ssim","seconds", "trajectoy_distance"]]=norm_df[["ssim", "seconds", "trajectoy_distance"]]
+norm_df = (data_train-data_train.mean())/data_train.std()
+data_train[["seconds", "trajectoy_distance"]]=norm_df[[ "seconds", "trajectoy_distance"]]
+print(data_train)
 val_size = 500
 val = data_train.iloc[:val_size, :]
 data_train = data_train.iloc[val_size:,:]
@@ -38,12 +38,13 @@ data_train = data_train.iloc[val_size:,:]
 x = data_train[["ssim", "seconds", "trajectoy_distance"]]
 y = data_train["duplicate"]
 
-model_n = 10
-models =[]
+# model_n = 50
+# models =[]
 # for i in range(model_n):
-#     models.append(("ab" + str(i), RandomForestClassifier(n_estimators=75, random_state=i)))
-#clf = VotingClassifier(estimators=models, voting="hard")
-clf = RandomForestRegressor(n_estimators=300, random_state=0)
+#     models.append(("ab" + str(i), MLPRegressor(random_state=0, max_iter=200 )))
+# clf = StackingRegressor(estimators=models)
+clf = RandomForestRegressor(n_estimators=250, random_state=0)
+# clf = R(weights='distance')
 clf.fit(x, y)
 total = 0
 total_false_positive = 0
