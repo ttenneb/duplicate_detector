@@ -78,12 +78,18 @@ for i in range(len(dataset)):
     while cap1.isOpened() and cap2.isOpened():
         ret1, frame1 = cap1.read()
         ret2, frame2 = cap2.read()
+        ret2, frame3 = cap2.read()
+        ret2, frame4 = cap2.read()
         if frame1 is not None and frame2 is not None:
             frame1 = frame1[25:1530, 635:]
             frame2 = frame2[25:1530, 635:]
-            dist = sm.structural_similarity(frame1, frame2, multichannel=True)
+            frame3 = frame1[25:1530, 635:]
+            frame4 = frame2[25:1530, 635:]
+            dist1 = sm.structural_similarity(frame1, frame2, multichannel=True)
+            dist2 = sm.structural_similarity(frame1, frame3, multichannel=True)
+            dist3 = sm.structural_similarity(frame1, frame4, multichannel=True)
             # print(dist, dataset[i][2], dataset[i][3], dataset[i][4])
-            dataset[i] += (dist,)
+            dataset[i] += (dist1,dist2,dist3,)
             print(dataset[i])
         count += 1
         if count > 0:
