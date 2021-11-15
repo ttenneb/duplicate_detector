@@ -10,16 +10,18 @@ import pandas as pd
 import csv
 import plotly.express as plot
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
-from sklearn.pipeline import make_pipeline
+from sklearn.linear_model import LassoCV
 from sklearn.preprocessing import StandardScaler
-from sklearn import svm, metrics, kernel_ridge
-from sklearn.neighbors import RadiusNeighborsRegressor
-from sklearn.model_selection import learning_curve
-from sklearn.ensemble import StackingRegressor, ExtraTreesRegressor
+from sklearn import svm, metrics, kernel_ridge, tree
+
+from sklearn import svm
+from sklearn.model_selection import learning_curve, train_test_split
+from sklearn.ensemble import StackingRegressor, HistGradientBoostingRegressor
 from sklearn.ensemble import RandomForestRegressor
 
 
 data_train = pd.read_csv(open("data_ssim.csv"))
+selected_features = ["seconds", "trajectory_distance", "ssim", "ln_trajectory_distance", "start_distance", "ln_start_distance"]
 for i, row in data_train.iterrows():
     if data_train.at[i, "duplicate"] == "F":
         data_train.at[i, "duplicate"] = 0
@@ -29,35 +31,42 @@ for i, row in data_train.iterrows():
 data_train = data_train.dropna()
 data_train = data_train.sample(frac=1).reset_index(drop=True)
 norm_df = (data_train-data_train.mean())/data_train.std()
-data_train[["seconds", "trajectoy_distance"]]=norm_df[[ "seconds", "trajectoy_distance"]]
+data_train[selected_features]=norm_df[selected_features]
 print(data_train)
-val_size = 500
-val = data_train.iloc[:val_size, :]
-data_train = data_train.iloc[val_size:,:]
 
-x = data_train[["ssim", "seconds", "trajectoy_distance"]]
+x = data_train[selected_features]
 y = data_train["duplicate"]
 
-# model_n = 50
-# models =[]
-# for i in range(model_n):
-#     models.append(("ab" + str(i), MLPRegressor(random_state=0, max_iter=200 )))
-# clf = StackingRegressor(estimators=models)
-clf = RandomForestRegressor(n_estimators=250, random_state=0)
-# clf = R(weights='distance')
-clf.fit(x, y)
+x_train, x_val, y_train, y_val = train_test_split(x,y, stratify=y, test_size=.2,random_state=0)
+
+
+
+models =[]
+for i in range(5):
+     models.append(("RF" + str(i), RandomForestRegressor(n_estimators=150, random_state=22)))
+# models.append(("SV0", svm.SVR()))
+# models.append(("SV1", svm.SVR()))
+# models.append(("GB0", HistGradientBoostingRegressor()))
+# models.append(("GB1", HistGradientBoostingRegressor()))
+# models.append(("L0", LassoCV()))
+# models.append(("LC1", LassoCV()))
+clf = StackingRegressor(estimators=models, final_estimator=svm.SVR())
+# clf = RandomForestRegressor(n_estimators=100, random_state=0)
+#clf = LassoCV()
+clf.fit(x_train, y_train)
 total = 0
 total_false_positive = 0
 total_true_positive = 0
 total_false_negative = 0
 total_true_negative = 0
 
-x_val = val[["ssim", "seconds", "trajectoy_distance"]]
-y_val  = val["duplicate"]
+
 
 y_pred = clf.predict(x_val)
 y_val = y_val.astype(int)
 fpr, tpr, thresholds = metrics.roc_curve(y_val, y_pred, pos_label=1)
+for i in range(len(fpr)):
+    print(fpr[i], tpr[i], thresholds[i])
 
 plt.figure()
 lw = 2
