@@ -4,7 +4,7 @@ This project contains two scripts: [generate.py]() and [train.py](). The first s
 
 ## Data and Feature Generation - generate.py
 
-###Required Packages:
+Required Packages:
  - csv
  - opencv
  - numpy
@@ -32,7 +32,7 @@ Since duplicates are likely to happen consecutively the model takes to features 
 The Structural Similarity index between the last frame of the first event's video and the first frame of the suspected duplicate's video.
 
 ## Model Training - train.py
-###Required Packages:
+Required Packages:
  - csv
  - opencv
  - numpy
@@ -63,9 +63,9 @@ and data, but example 2 is a much more useful model.
 Example 2 is more useful because it has a threshold 
 that has almost no false positives while still catching 
 almost 50% of the duplicates.
-###Example 1:
+Example 1:
 ![](res/img_2.png)
-###Example 2:
+Example 2:
 ![](res/img_1.png)
 
 ##Planned 
