@@ -6,8 +6,9 @@ from datetime import datetime
 import ast
 import math
 import numpy as np
+import sys
 
-data = csv.reader(open("Thomasville N.csv"))
+data = csv.reader(open(sys.argv[1]))
 last = None
 saved = None
 dataset_dup = []
@@ -129,7 +130,7 @@ for i in range(len(dataset)):
         count += 1
         if count > 0:
             break
-with open('data_ssim.csv', 'w', newline='') as csvfile:
+with open('data.csv', 'w', newline='') as csvfile:
     csvfile.truncate(0)
 
     output = csv.writer(csvfile)
