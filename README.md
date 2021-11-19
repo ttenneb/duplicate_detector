@@ -64,9 +64,9 @@ Example 2 is more useful because it has a threshold
 that has almost no false positives while still catching 
 almost 50% of the duplicates.
 ###Example 1:
-![](res\img_2.png)
+![](res/img_2.png)
 ###Example 2:
-![](res\img_1.png)
+![](res/img_1.png)
 
 ##Planned 
  - Optimize hyperparameters.
