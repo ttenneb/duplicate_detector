@@ -32,7 +32,7 @@ Since duplicates are likely to happen consecutively the model takes to features 
 The Structural Similarity index between the last frame of the first event's video and the first frame of the suspected duplicate's video.
 
 ## Model Training - train.py
-Required Packages:
+### Required Packages:
  - csv
  - opencv
  - numpy
