@@ -4,7 +4,7 @@ This project contains two scripts: [generate.py]() and [train.py](). The first s
 
 ## Data and Feature Generation - generate.py
 
-Required Packages:
+### Required Packages:
  - csv
  - opencv
  - numpy
@@ -52,7 +52,7 @@ python train.py
 
 An ROC curve and accuracy metrics will be displayed once the model has been trained. 
 
-##Selecting a Model
+## Selecting a Model
 Some models perform much better than others. Accuracy is 
 not helpful for selecting a model in this situation since
 false positives are much worse than false negatives. 
@@ -63,12 +63,12 @@ and data, but example 2 is a much more useful model.
 Example 2 is more useful because it has a threshold 
 that has almost no false positives while still catching 
 almost 50% of the duplicates.
-Example 1:
+### Example 1:
 ![](res/img_2.png)
-Example 2:
+### Example 2:
 ![](res/img_1.png)
 
-##Planned 
+## Planned 
  - Optimize hyperparameters.
  - Finish checking Thomasville North dataset for unlabeled duplicates (many still exist).
  - Test new model architectures.
