@@ -130,6 +130,8 @@ for i in range(len(dataset)):
     while cap1.isOpened() and cap2.isOpened():
         ret1, frame1 = cap1.read()
         ret2, frame2 = cap2.read()
+
+        cv.imwrite("test.png", frame1)
         # ret2, frame3 = cap2.read()
         # ret2, frame4 = cap2.read()
         if frame1 is not None and frame2 is not None:
