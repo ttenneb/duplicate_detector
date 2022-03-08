@@ -1,14 +1,31 @@
+import argparse
 import csv
 import cv2 as cv
 import skimage.metrics as sm
 from sklearn.linear_model import LinearRegression
-from datetime import datetime
+
 import ast
 import math
 import numpy as np
-import sys
+import pandas as pd
 
-data = csv.reader(open(sys.argv[1]))
+def getfile(args):
+    path = args.data_path
+    data = pd.read_csv(path)
+    data['start_time'] = pd.to_datetime(data['start_time'])
+    data['end_time'] = pd.to_datetime(data['end_time'])
+    return data
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--data-path', type=str, default="Ramsey.xlsx", help='what data file to read')
+
+    args = parser.parse_args()
+
+data = getfile(args)
+
 last = None
 saved = None
 dataset_dup = []
@@ -48,26 +65,26 @@ def predict_path(list):
 is_last_duplicate = False
 duplicate_count = 0
 dataset = []
-for row in data:
-    if last is not None and (row[8] == last[8] or row[8] == ""):
-        continue
-    if row[11] == 'Duplicate':
+for index, row in data.iterrows():
+
+    # print(row)
+    if row['Explanation'] == 'Duplicate':
         temp = last
         last = row
 
-        dist, start_dist = trajectoy_distance(temp[6], last[6])
+        dist, start_dist = trajectoy_distance(temp["trajectory"], last["trajectory"])
 
-        coefficient1, intercept1 = predict_path(temp[6])
-        coefficient2, intercept2 = predict_path(last[6])
+        coefficient1, intercept1 = predict_path(temp["trajectory"])
+        coefficient2, intercept2 = predict_path(last["trajectory"])
 
-        time_dist = datetime.strptime(last[2], "%Y-%m-%d %H:%M:%S") - datetime.strptime(temp[3], "%Y-%m-%d %H:%M:%S")
+        time_dist = last["start_time"] - temp["end_time"]
         time_dist = time_dist.total_seconds()
 
         if is_last_duplicate:
-            dataset.append((temp[8], last[8], dist, math.log(dist), start_dist, math.log(start_dist), time_dist,
-                            coefficient1[0][0], intercept1, coefficient2[0][0], intercept2, 1, duplicate_count, "T"))
+            dataset.append((temp["clip"], last["clip"], dist, math.log(dist), start_dist, math.log(start_dist), time_dist,
+                            coefficient1[0][0], intercept1[0], coefficient2[0][0], intercept2[0], 1, duplicate_count, "T"))
         else:
-            dataset.append((temp[8], last[8], dist, math.log(dist), start_dist, math.log(start_dist), time_dist,
+            dataset.append((temp["clip"], last["clip"], dist, math.log(dist), start_dist, math.log(start_dist), time_dist,
                             coefficient1[0][0], intercept1[0], coefficient2[0][0], intercept2[0], 0, duplicate_count, "T"))
 
         is_last_duplicate = True
@@ -77,20 +94,19 @@ for row in data:
         temp = last
         last = row
         if temp is not None:
-            dist, start_dist = trajectoy_distance(temp[6], last[6])
+            dist, start_dist = trajectoy_distance(temp["trajectory"], last["trajectory"])
 
-            coefficient1, intercept1 = predict_path(temp[6])
-            coefficient2, intercept2 = predict_path(last[6])
+            coefficient1, intercept1 = predict_path(temp["trajectory"])
+            coefficient2, intercept2 = predict_path(last["trajectory"])
 
-            time_dist = datetime.strptime(last[2], "%Y-%m-%d %H:%M:%S") - datetime.strptime(temp[3],
-                                                                                            "%Y-%m-%d %H:%M:%S")
+            time_dist = last["start_time"] - temp['end_time']
             time_dist = time_dist.total_seconds()
 
             if is_last_duplicate:
-                dataset.append((temp[8], last[8], dist, math.log(dist), start_dist, math.log(start_dist), time_dist,
-                                coefficient1[0][0], intercept1, coefficient2[0][0], intercept2, 1, duplicate_count, "F"))
+                dataset.append((temp["clip"], last["clip"], dist, math.log(dist), start_dist, math.log(start_dist), time_dist,
+                                coefficient1[0][0], intercept1[0], coefficient2[0][0], intercept2[0], 1, duplicate_count, "F"))
             else:
-                dataset.append((temp[8], last[8], dist, math.log(dist), start_dist, math.log(start_dist), time_dist,
+                dataset.append((temp["clip"], last["clip"], dist, math.log(dist), start_dist, math.log(start_dist), time_dist,
                                 coefficient1[0][0], intercept1[0], coefficient2[0][0], intercept2[0], 0, duplicate_count, "F"))
         is_last_duplicate = False
         duplicate_count = 0
@@ -117,8 +133,8 @@ for i in range(len(dataset)):
         # ret2, frame3 = cap2.read()
         # ret2, frame4 = cap2.read()
         if frame1 is not None and frame2 is not None:
-            frame1 = frame1[25:1530, 635:]
-            frame2 = frame2[25:1530, 635:]
+            frame1 = frame1[10:581, 268:574]
+            frame2 = frame2[10:581, 268:574]
             # frame3 = frame1[25:1530, 635:]
             # frame4 = frame2[25:1530, 635:]
             dist1 = sm.structural_similarity(frame1, frame2, multichannel=True)
@@ -141,3 +157,4 @@ with open('data.csv', 'w', newline='') as csvfile:
     for row in dataset:
         print(row)
         output.writerow(row)
+
