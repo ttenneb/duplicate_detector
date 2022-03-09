@@ -18,12 +18,15 @@ from sklearn.ensemble import RandomForestRegressor
 
 import pickle
 
-data_train = pd.read_csv(open("data.csv"))
-selected_features = ["seconds", "trajectory_distance", "ssim", "ln_trajectory_distance", "start_distance",
-                     "ln_start_distance", 'coefficient1', 'intercept1', 'coefficient2', 'intercept2',
-                     'is_last_duplicate', 'duplicate_count']
-normalized_features = ["trajectory_distance", "ln_trajectory_distance", "start_distance",
-                       "ln_start_distance"]
+pd.set_option('display.max_rows', 500)
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
+
+data_train = pd.read_csv(open("data_ramsey.csv"))
+
+selected_features = ["seconds", "trajectory_distance", "ssim", "start_distance",
+                      'coefficient1', 'intercept1', 'coefficient2', 'intercept2']
+normalized_features = []
 for i, row in data_train.iterrows():
     if data_train.at[i, "duplicate"] == "F":
         data_train.at[i, "duplicate"] = 0
@@ -41,7 +44,9 @@ x_train, x_val, y_train, y_val = train_test_split(x, y, stratify=y, test_size=.2
 
 clf = RandomForestRegressor(n_estimators=150, random_state=22)
 
-clf.fit(x_train.values, y_train)
+print(x_train)
+
+clf.fit(x_train, y_train)
 total = 0
 
 y_pred = clf.predict(x_val)
